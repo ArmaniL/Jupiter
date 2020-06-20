@@ -1,4 +1,4 @@
-import  { useState,useEffect,Component } from 'react';
+import  React,{ useState,useEffect,Component } from 'react';
 import { TextInput,View,Animated,ActivityIndicator,TouchableOpacity,Text} from 'react-native';
 import {SafeAreaView,SafeAreaProvider} from 'react-native-safe-area-context';
 import * as Font from 'expo-font'
@@ -9,39 +9,34 @@ import Util from '../Util'
 
 
 var symbols;
- 
 
-async function getData(symbol){
-  getNews(symbol)
-getStocks(symbol)
 
-}
 
 
  async function getStocks(symbol){
 
   let url="https://river-karma-280122.uc.r.appspot.com/?SYM="
   url=url.concat(symbol["Symbol"])
-  console.log("URL IS")
-  console.log(url)
-  fetch(url).then(
+ // console.log("URL IS")
+  //console.log(url)
+  Util.sleep(8000).then(fetch(url).then(
       
       (response)=>{
-          console.log("Response is ")
+         // console.log("Response is ")
           return(response.json())
       }
       
       ).then((data)=>{
-          console.log(data)
+          //console.log(data)
           symbol["High"]=data["high"][0]
           symbol["Close"]=data["close"][0]
           symbol["Low"]=data["low"][0]
           symbol["Open"]=data["open"][0]
           symbol["Volume"]=data["volume"][0]
-          console.log(data["high"][0])
-          console.log(symbol["High"])
-          console.log(symbol)
-         })
+          //console.log(data["high"][0])
+          //console.log(symbol["High"])
+          //console.log(symbol)
+         }))
    
 }
 
@@ -51,25 +46,18 @@ getStocks(symbol)
 
 async function getNews(Symbol){
 //get news
-url="http://newsapi.org/v2/top-headlines?"
+let url="http://newsapi.org/v2/top-headlines?"
 url=url.concat("q=").concat(Symbol["Company"])
 url=url.concat("&apiKey=879248ecbcc04ce1a9bf0fef399076ff")
 console.log(url)
-fetch(url).then(
-      
-  (response)=>{
-      
-      return(response.json())
-  }
-  
-  ).then((data)=>{
+Util.sleep(8000)
+let result = await fetch(url).then(response => response.json());
+return result;
+
+}
+
+
     
-     this.articles=this.articles.concat( data["articles"])
-     //console.log("\n")
-     //console.log(articles)
-     })
-      
-    }
 
 
 export default class StockScreen extends Component{
@@ -78,11 +66,19 @@ export default class StockScreen extends Component{
 
 constructor(props) {
     super(props);
-    this.state = { loading: true };
+    this.state = { loading: true,articles:[] };
     symbols=Util.getRandom(Symbols,10)
-    this.articles=[]
+    this.fetchNews = this.fetchNews.bind(this);
   }
 
+
+
+  fetchNews() {
+    getNews(symbols[0])
+      .then(articles => this.setState({ articles  }))
+      .catch(() => this.setState({ refreshing: false }));
+     console.log(this.state.articles)  
+    }
 
 
   async componentDidMount(){
@@ -97,8 +93,11 @@ constructor(props) {
     })
     //this.symbols.forEach(getData)  
     symbols.forEach(getStocks)
-    console.log("Symbols is ")
-    console.log(symbols)
+    console.log("Example\n")
+    
+    //console.log("Symbols is ")
+    //console.log(symbols)
+    this.fetchNews()
     this.setState({ loading: false });
 }
 
@@ -118,15 +117,12 @@ return(
  />
 </FadeInView>
 <View style={styles.SmallCard}>
-<FlatList horizontal={true}  data={this.articles} renderItem={
+<FlatList horizontal={true} keyExtractor={item => item.url}  data={this.state.articles} renderItem={
 ({item})=>(
   <TouchableOpacity style={styles.NewsContainer} >
   <View style={styles.NewsInfo}>
   <Text>
     {item["title"]}
-  </Text>
-  <Text>
-    {item["description"]}
   </Text>
   </View>
   </TouchableOpacity>
@@ -169,7 +165,7 @@ return(
 const FadeInView = (props) => {
     const [fadeAnim] = useState(new Animated.Value(0))  // Initial value for opacity: 0
   
-    React.useEffect(() => {
+    useEffect(() => {
       Animated.timing(
         fadeAnim,
         {
