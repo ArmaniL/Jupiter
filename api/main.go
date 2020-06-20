@@ -6,12 +6,17 @@ import (
 	"net/http"
 	"os"
 	"log"
+	"encoding/json"
 	"github.com/markcheno/go-quote"
+	
+	newsapi	"github.com/kaelanb/newsapi-go"
 )
 
 var dt time.Time
+
+const key="879248ecbcc04ce1a9bf0fef399076ff";
 func main() {
-	
+	http.HandleFunc("/News/Headline", HeadlineHandler)
 	http.HandleFunc("/Stock/Quote", StockHandler)
 	http.HandleFunc("/Stock/Quotes", StocksHandler)
 	http.HandleFunc("/Currency/Quote",CurrencyHandler)
@@ -110,4 +115,33 @@ func CurrenciesHandler(w http.ResponseWriter, r *http.Request){
 	
 	}
 
+	
+
 }
+
+func HeadlineHandler(w http.ResponseWriter, r *http.Request){
+
+	client := newsapi.New(key)
+	param:= r.URL.Query()
+	q, present := param["q"]
+	if !present || len(q) == 0 {
+        fmt.Println("symbols not present")
+	}
+	query1 := []string{}
+	query1=append(query1,fmt.Sprintf("q=%s",q[0]))
+    newsResponse, err := client.GetEverything(query1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if newsResponse.TotalResults>0{
+	article := newsResponse.Articles  
+	
+	values,_:=json.Marshal(article[0])
+	fmt.Fprintf(w,string(values)) 
+	}else{
+		fmt.Fprintf(w,"[]")
+	}
+}
+
+
+
