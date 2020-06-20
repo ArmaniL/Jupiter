@@ -1,28 +1,15 @@
-import  { Component } from 'react';
-import { createStackNavigator, createAppContainer } from '@react-navigation/native';
+import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack'
 import StockScreen from './screens/StockScreen'
-import LogoScreen from './screens/LogoScreen'
-
+import { NavigationContainer } from '@react-navigation/native'
 export default class App extends Component{
   render() {
-    return <AppContainer />;
+    return <MainStackNavigator />;
   }
 
 }
 
-const AppNavigator = createStackNavigator({
-  Logo: {
-    screen: LogoScreen
-  },
-  Home: {
-    screen: StockScreen
-  }},{
-    initialRouteName: "Logo"
-}
-);
-
-const AppContainer = createAppContainer(AppNavigator);
 
 const styles = StyleSheet.create({
   container: {
@@ -32,3 +19,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+
+const Stack = createStackNavigator()
+
+function MainStackNavigator() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Home' >
+        <Stack.Screen name='Home' component={StockScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  )
+}
