@@ -7,7 +7,13 @@ const styles=StyleSheet.create({
     },
     NewsContainer:{
       borderRadius:8,
-    
+      flexDirection:'row',
+      borderColor:'#40FF00',
+      borderWidth:2,
+      borderRadius:8,
+      backgroundColor:'rgb(255,255,255)',
+      marginTop:5,
+          
     }
     
       ,
