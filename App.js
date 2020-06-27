@@ -5,7 +5,7 @@ import StockScreen from './screens/StockScreen'
 import { NavigationContainer } from '@react-navigation/native'
 export default class App extends Component{
   render() {
-    return <MainStackNavigator />;
+    return <StockScreen />;
   }
 
 }

@@ -6,20 +6,16 @@ import Symbols from '../constants/Symbols'
 import { FlatList } from 'react-native-gesture-handler'; 
 import  styles from '../constants/Stockstyles'
 import Util from '../Util'
-
-
-var symbols;
-
-
+import ArticlePreview from "../components/ArticlePreview"
 
 
  async function getStocks(symbol){
 
-  let url="https://river-karma-280122.uc.r.appspot.com/?SYM="
+  let url="https://river-karma-280122.uc.r.appspot.com/Stock/Quote?SYM="
   url=url.concat(symbol["Symbol"])
  // console.log("URL IS")
   //console.log(url)
-  Util.sleep(8000).then(fetch(url).then(
+  Util.sleep(20000).then(fetch(url).then(
       
       (response)=>{
          // console.log("Response is ")
@@ -28,11 +24,14 @@ var symbols;
       
       ).then((data)=>{
           //console.log(data)
-          symbol["High"]=data["high"][0]
-          symbol["Close"]=data["close"][0]
-          symbol["Low"]=data["low"][0]
-          symbol["Open"]=data["open"][0]
-          symbol["Volume"]=data["volume"][0]
+          
+          symbol["High"]=parseFloat(data["high"][0]).toFixed(2).toString()
+          symbol["Close"]=parseFloat(data["close"][0]).toFixed(2).toString()
+          symbol["Low"]=parseFloat(data["low"][0]).toFixed(2).toString()
+          symbol["Open"]=parseFloat(data["open"][0]).toFixed(2).toString()
+          symbol["Volume"]=parseFloat(data["volume"][0]).toFixed(2).toString()
+          
+       
           //console.log(data["high"][0])
           //console.log(symbol["High"])
           //console.log(symbol)
@@ -46,13 +45,24 @@ var symbols;
 
 async function getNews(Symbol){
 //get news
-let url="http://newsapi.org/v2/top-headlines?"
-url=url.concat("q=").concat(Symbol["Company"])
-url=url.concat("&apiKey=879248ecbcc04ce1a9bf0fef399076ff")
+let url="https://river-karma-280122.uc.r.appspot.com/News/Headline?q="
+url=url.concat(Symbol["Company"])
 console.log(url)
-Util.sleep(8000)
-let result = await fetch(url).then(response => response.json());
-return result;
+Util.sleep(20000).then(fetch(url).then(
+      
+  (response)=>{
+     // console.log("Response is ")
+      return(response.json())
+  }
+  
+  ).then((data)=>{
+      //console.log(data)
+       Symbol["Article"]=data
+      //console.log(data["high"][0])
+      //console.log(symbol["High"])
+      //console.log(symbol)
+     }))
+
 
 }
 
@@ -65,39 +75,56 @@ export default class StockScreen extends Component{
 
 
 constructor(props) {
-    super(props);
-    this.state = { loading: true,articles:[] };
-    symbols=Util.getRandom(Symbols,10)
-    this.fetchNews = this.fetchNews.bind(this);
+    super(props)
+    this.state = { loading: true,symbols:[],articles:[] }
+    this.state.symbols=Util.getRandom(Symbols,20)
+  
   }
 
 
 
-  fetchNews() {
-    getNews(symbols[0])
-      .then(articles => this.setState({ articles  }))
-      .catch(() => this.setState({ refreshing: false }));
-     console.log(this.state.articles)  
-    }
+  
 
 
   async componentDidMount(){
   
     await Font.loadAsync({
-      'Regular':require('../assets/fonts/BalooThambi2-Regular.ttf'),
-      'Bold':require('../assets/fonts/BalooThambi2-Regular.ttf'),
-      'Medium':require('../assets/fonts/BalooThambi2-Medium.ttf'),
-      'SemiBold':require('../assets/fonts/BalooThambi2-Regular.ttf'),
-      'ExtraBold': require('../assets/fonts/BalooThambi2-ExtraBold.ttf')   
+      'ExtraLight':require('../assets/fonts/Dosis-ExtraLight.ttf'),
+      'Light':require('../assets/fonts/Dosis-Light.ttf'),
+      'Regular':require('../assets/fonts/Dosis-Regular.ttf'),
+      'Bold':require('../assets/fonts/Dosis-Bold.ttf'),
+      'Medium':require('../assets/fonts/Dosis-Medium.ttf'),
+      'SemiBold':require('../assets/fonts/Dosis-SemiBold.ttf'),
+      'ExtraBold': require('../assets/fonts/Dosis-ExtraBold.ttf')   
       
     })
     //this.symbols.forEach(getData)  
-    symbols.forEach(getStocks)
-    console.log("Example\n")
+    this.state.symbols.forEach(getStocks)
+    this.state.symbols.forEach(getNews)
+    const Nonull=(symbol)=>{ 
+      if(symbol["Open"]){ return true;}
+    return false; 
+    }
+    this.state.symbols=this.state.symbols.filter(Nonull)
+    
+    for(let i = 0 ; i < this.state.symbols.length; i++) {
+    
+      if(this.state.symbols[i]["Article"]){
+        this.state.articles.push(this.state.symbols[i]["Article"])
+      }
+    console.log(this.state.articles)  
+   }
+    
+    
+
+      
+      
+    
+    console.log("Example g\n")
     
     //console.log("Symbols is ")
-    //console.log(symbols)
-    this.fetchNews()
+    //console.log(this.state.symbols)
+    //console.log(this.state.articles)
     this.setState({ loading: false });
 }
 
@@ -110,31 +137,22 @@ return(
 <SafeAreaProvider>
 
 <SafeAreaView style={styles.container}>      
-<FadeInView style={styles.StatusBar}>      
-<TextInput
- style={styles.Input}
- placeholder="Quote Lookup"
- />
-</FadeInView>
+<Text style={{fontFamily:"Bold",marginTop:10,fontSize:32}}>News</Text>
 <View style={styles.SmallCard}>
-<FlatList horizontal={true} keyExtractor={item => item.url}  data={this.state.articles} renderItem={
-({item})=>(
-  <TouchableOpacity style={styles.NewsContainer} >
-  <View style={styles.NewsInfo}>
-  <Text>
-    {item["title"]}
-  </Text>
-  </View>
-  </TouchableOpacity>
+<FlatList horizontal={true}   data={this.state.articles} renderItem={
+({item})=>(  
+ <ArticlePreview article={item} />
+  
 )
 
 }>
 
 </FlatList>
 </View>
+<Text style={{fontFamily:"Bold",marginTop:10,fontSize:32}}>Quotes</Text>
 <View  style={styles.Card}>
   <FlatList
-  data={symbols}
+  data={this.state.symbols}
   renderItem={({ item }) => (
     <TouchableOpacity style={styles.SymboleContainer} >
      <View style={styles.CompanyInfo}> 
@@ -143,11 +161,26 @@ return(
     <Text>{item["Percent"]}</Text>
   </View>
   <View style={styles.StockTable}>
-  <Text>{"Open:".concat(item["Open"])}</Text>
-  <Text>{"High:".concat(item["High"])}</Text>
-  <Text>{"Low:".concat(item["Low"])}</Text>
-  <Text>{"High:".concat(item["High"])}</Text>
-  <Text>{"Volume:".concat(item["Volume"])}</Text>
+  <View style={{flexDirection:'row'}}>
+  <Text style={styles.Info} >{"Open:"}</Text>
+  <Text style={styles.Numbers}>{item["Open"]}</Text>
+  </View>
+  <View style={{flexDirection:'row'}}>
+  <Text style={styles.Info}>{"High:"}</Text>
+  <Text style={styles.Numbers}>{item["High"]}</Text>
+  </View>
+  <View style={{flexDirection:'row'}}>
+  <Text style={styles.Info}>{"Low:"}</Text>
+  <Text style={styles.Numbers}>{item["Low"]}</Text>
+  </View>
+  <View style={{flexDirection:'row'}}>
+  <Text style={styles.Info}>{"Close:"}</Text>
+  <Text style={styles.Numbers}>{item["Close"]}</Text>
+  </View>
+  <View style={{flexDirection:'row'}}>
+  <Text style={styles.Info}>{"Volume:"}</Text>
+  <Text style={styles.Numbers}>{item["Volume"]}</Text>
+  </View>
   </View>
   </TouchableOpacity>
 )}
@@ -167,7 +200,7 @@ const FadeInView = (props) => {
   
     useEffect(() => {
       Animated.timing(
-        fadeAnim,
+        fadeAnim, 
         {
           toValue: 1,
           duration: 1000,
@@ -186,3 +219,7 @@ const FadeInView = (props) => {
       </Animated.View>
     );
   }
+
+
+  //<ArticlePreview title={item["Article"]["title"]} author={item.Article.author} imageurl={item.Article.urlToImage} description={item.Article.description} source={item.Article.source.name} ></ArticlePreview>
+  

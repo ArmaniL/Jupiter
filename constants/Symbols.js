@@ -27,7 +27,50 @@ const Symbols=[{"Symbol":"AAPL",
                  {"Symbol":"SAVE",
                  "Company":"Spirit Airline" },
                  {"Symbol":"V",
-                 "Company":"Visa" }
+                 "Company":"Visa" },
+                 {"Symbol":"GE",
+                 "Company":"General Electric Company" },
+                 {"Symbol":"AAL",
+                 "Company":"American Airlines" },
+                 {"Symbol":"DIS",
+                 "Company":"Disney" },
+                 {"Symbol":"GE",
+                 "Company":"General Electric Company" },
+                 {"Symbol":"UBER",
+                 "Company":"Uber" },
+                 {"Symbol":"FB",
+                 "Company":"Facebook" },
+                 {"Symbol":"LYFT",
+                 "Company":"Lyft" },
+                 {"Symbol":"ZM",
+                 "Company":"ZOOM" },
+                 {"Symbol":"ET",
+                 "Company":"Energy Transfer" },
+                 {"Symbol":"ATVI",
+                 "Company":"Activision Blizzards" },
+                 {"Symbol":"SW",
+                 "Company":"Square" },
+                 {"Symbol":"SNE",
+                 "Company":"Sony" },
+                 {"Symbol":"WFC",
+                 "Company":"Wells Fargo" },
+                 {"Symbol":"CCL",
+                 "Company":"Carnival" },
+                 {"Symbol":"BAC",
+                 "Company":"Bank of America" },
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
                                   
 
                  ]

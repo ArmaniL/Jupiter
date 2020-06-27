@@ -5,18 +5,9 @@ const styles=StyleSheet.create({
       flexDirection:"column",
     
     },
-    NewsContainer:{
-      borderRadius:8,
-      flexDirection:'row',
-      borderColor:'#40FF00',
-      borderWidth:2,
-      borderRadius:8,
-      backgroundColor:'rgb(255,255,255)',
-      marginTop:5,
-          
-    }
     
-      ,
+    
+      
         SymboleContainer:{
           paddingLeft:10,
           flexDirection:'row',
@@ -42,7 +33,7 @@ const styles=StyleSheet.create({
         
         color:'rgb(37, 49, 37  )',
         fontSize:32,
-        fontFamily:'ExtraBold'
+        fontFamily:'ExtraLight'
         },
         StockTable:{
         flexDirection:'column'
@@ -56,6 +47,14 @@ const styles=StyleSheet.create({
         ,
         CompanyInfo:{
           flexDirection:"column"
+
+        },
+        Info:{
+          fontFamily:'SemiBold'
+        }
+        ,
+        Numbers:{
+          fontFamily:'Medium'
         }
         ,
         container: {
@@ -69,7 +68,7 @@ const styles=StyleSheet.create({
        flex:10,
        backgroundColor:'rgb(237, 249, 235)',
        borderRadius:20,
-       marginTop:20,
+       marginTop:0,
        marginLeft:5,
        marginRight:5,
        paddingTop:5,
@@ -83,7 +82,7 @@ const styles=StyleSheet.create({
        },
        
        SmallCard:{
-         flex:5,
+         flex:5.5,
          backgroundColor:'rgb(237, 249, 235)'
        }
        ,
