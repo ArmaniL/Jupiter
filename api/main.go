@@ -14,7 +14,7 @@ import (
 
 var dt time.Time
 
-const key="879248ecbcc04ce1a9bf0fef399076ff";
+const key="";
 func main() {
 	http.HandleFunc("/News/Headline", HeadlineHandler)
 	http.HandleFunc("/Stock/Quote", StockHandler)
